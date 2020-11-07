@@ -6,13 +6,6 @@ const hotelSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    min: 3,
-    match: /(\W|^)[\w.+\-]*@gmail\.com(\W|$)/,
-  },
   description: {
     type: String,
     min: 3,
@@ -22,6 +15,26 @@ const hotelSchema = new mongoose.Schema({
     required: true,
   },
   star: {
+    type: Number,
+    required: true,
+  },
+  city: {
+    type: String,
+    required: true,
+  },
+  district: {
+    type: String,
+    required: true,
+  },
+  ward: {
+    type: String,
+    required: true,
+  },
+  street: {
+    type: String,
+    required: true,
+  },
+  phone: {
     type: Number,
     required: true,
   },

@@ -24,6 +24,7 @@ const roomSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  //number of room
   quantity: {
     type: Number,
     required: true,
@@ -44,3 +45,5 @@ const roomSchema = new mongoose.Schema({
     },
   ],
 });
+
+module.exports = mongoose.model('Room', roomSchema);

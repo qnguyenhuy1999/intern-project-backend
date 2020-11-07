@@ -14,6 +14,9 @@ mongoose.connect(process.env.MONGO_URI, {
 });
 
 const authRoute = require('./routes/auth');
+const hotelRoute = require('./routes/hotel');
+const roomRoute = require('./routes/room');
+const equipmentRoute = require('./routes/equipment');
 
 const app = express();
 const corsOptions = {
@@ -31,6 +34,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cors(corsOptions));
 
 app.use('/api/auth', authRoute);
+app.use('/api/hotel', hotelRoute);
+app.use('/api/room', roomRoute);
+app.use('/api/equipment', equipmentRoute);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
