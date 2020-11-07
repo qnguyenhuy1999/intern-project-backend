@@ -50,13 +50,20 @@ module.exports.filter = async (req, res) => {
   const { city, number_of_rooms, number_of_guest } = req.body;
 
   //if empty rooms, it can be out of room or room not enough contain number of guests
-  const hotels = await Hotel.find({ city }).populate({
-    path: 'rooms',
-    match: {
-      quantity: { $gte: number_of_rooms },
-      people: { $gte: number_of_guest },
-    },
-  });
+  const hotels = await Hotel.find({ city })
+    .populate({
+      path: 'rooms',
+      match: {
+        quantity: { $gte: number_of_rooms },
+        people: { $gte: number_of_guest },
+      },
+      select: 'views quantity images name hotel area people price',
+      populate: {
+        path: 'equipments',
+        select: 'name icon -_id',
+      },
+    })
+    .populate('owner', 'email fullname phone -_id');
 
   return res.json({ hotels });
 };
