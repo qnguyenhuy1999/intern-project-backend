@@ -49,13 +49,14 @@ module.exports.filter = async (req, res) => {
   //1 room 2 people
   const { city, number_of_rooms, number_of_guest } = req.body;
 
-  const hotels = await Hotel.find({ city })
-    .populate('rooms')
-    .exec(function (err, hotelDocument) {
-      console.log(hotelDocument);
-    });
+  //if empty rooms, it can be out of room or room not enough contain number of guests
+  const hotels = await Hotel.find({ city }).populate({
+    path: 'rooms',
+    match: {
+      quantity: { $gte: number_of_rooms },
+      people: { $gte: number_of_guest },
+    },
+  });
 
   return res.json({ hotels });
 };
-
-// module.

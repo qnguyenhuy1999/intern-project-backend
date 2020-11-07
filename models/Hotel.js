@@ -47,6 +47,12 @@ const hotelSchema = new mongoose.Schema({
     type: mongoose.Types.ObjectId,
     ref: 'User',
   },
+  rooms: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: 'Room',
+    },
+  ],
 });
 
 module.exports = mongoose.model('Hotel', hotelSchema);

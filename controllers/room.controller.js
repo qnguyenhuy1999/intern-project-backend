@@ -1,5 +1,6 @@
 const status = require('http-status');
 
+const Hotel = require('../models/Hotel');
 const Room = require('../models/Room');
 
 module.exports.createRoom = async (req, res) => {
@@ -15,9 +16,14 @@ module.exports.createRoom = async (req, res) => {
       people,
       price,
     });
+    await Hotel.findByIdAndUpdate(
+      hotel,
+      { $push: { rooms: roomId } },
+      { new: true, upsert: true }
+    );
 
     const room = await Room.findById(roomId)
-      .populate('hotel')
+      .populate('hotel', '-rooms')
       .populate('equipments');
 
     return res.json({ room });
