@@ -12,6 +12,15 @@ router.post(
   validator.createHotel,
   controller.createHotel
 );
+
+router.put(
+  '/edit',
+  authMiddleware.requireAuth,
+  authMiddleware.isOwnHotel,
+  validator.editHotel,
+  controller.editHotel
+);
+
 router.post('/filter', validator.filter, controller.filter);
 
 module.exports = router;

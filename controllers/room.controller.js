@@ -2,6 +2,7 @@ const status = require('http-status');
 
 const Hotel = require('../models/Hotel');
 const Room = require('../models/Room');
+const Transaction = require('../models/Transaction');
 
 module.exports.createRoom = async (req, res) => {
   const { name, hotel, equipments, area, quantity, people, price } = req.body;
@@ -27,6 +28,85 @@ module.exports.createRoom = async (req, res) => {
       .populate('equipments');
 
     return res.json({ room });
+  } catch (err) {
+    return res.status(status.INTERNAL_SERVER_ERROR).json({
+      message: err.message,
+    });
+  }
+};
+
+module.exports.editRoom = async (req, res) => {
+  const {
+    id,
+    name,
+    hotel,
+    equipments,
+    area,
+    quantity,
+    people,
+    price,
+  } = req.body;
+
+  const roomExist = await Room.findById(id);
+
+  if (!roomExist) {
+    return res
+      .status(status.BAD_REQUEST)
+      .json({ message: 'The room is not existing.' });
+  }
+
+  try {
+    await Room.findByIdAndUpdate(id, {
+      name,
+      hotel,
+      equipments,
+      area,
+      quantity,
+      people,
+      price,
+    });
+
+    const room = await Room.findById(id)
+      .populate('hotel', '-rooms')
+      .populate('equipments');
+
+    return res.json({ room });
+  } catch (err) {
+    return res.status(status.INTERNAL_SERVER_ERROR).json({
+      message: err.message,
+    });
+  }
+};
+
+module.exports.booking = async (req, res) => {
+  const { room, phone, fullname, checkin_date, checkout_date } = req.body;
+
+  try {
+    const transactionId = await Transaction.create({
+      room,
+      user: req.userId,
+      phone,
+      fullname,
+      checkin_date,
+      checkout_date,
+    });
+
+    const transaction = await Transaction.findById(transactionId.id)
+      .populate({
+        path: 'room',
+        select: 'equipments name hotel area  people price',
+        populate: {
+          path: 'hotel',
+          select:
+            'name description avatar star city district ward street phone',
+        },
+        populate: {
+          path: 'equipments',
+        },
+      })
+      .populate('user', 'email city district ward street');
+
+    return res.json({ transaction });
   } catch (err) {
     return res.status(status.INTERNAL_SERVER_ERROR).json({
       message: err.message,

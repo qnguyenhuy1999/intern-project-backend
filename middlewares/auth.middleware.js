@@ -40,7 +40,7 @@ module.exports.isAdmin = async (req, res, next) => {
 module.exports.isOwnHotel = async (req, res, next) => {
   const user = await User.findById(req.userId);
 
-  if (user.role !== 2) {
+  if (user.role !== 2 && user.role !== 1) {
     next(
       res.status(status.FORBIDDEN).json({
         message: 'Email or password not correct.',

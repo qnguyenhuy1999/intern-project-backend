@@ -19,6 +19,26 @@ const userSchema = new mongoose.Schema(
       required: true,
       min: 5,
     },
+    city: {
+      type: String,
+      required: true,
+    },
+    district: {
+      type: String,
+      required: true,
+    },
+    ward: {
+      type: String,
+      required: true,
+    },
+    street: {
+      type: String,
+      required: true,
+    },
+    phone: {
+      type: Number,
+      required: true,
+    },
     role: {
       type: Number,
       default: 3,

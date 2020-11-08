@@ -13,4 +13,19 @@ router.post(
   controller.createRoom
 );
 
+router.put(
+  '/edit',
+  authMiddleware.requireAuth,
+  authMiddleware.isOwnHotel,
+  validator.editRoom,
+  controller.editRoom
+);
+
+router.post(
+  '/booking',
+  authMiddleware.requireAuth,
+  validator.booking,
+  controller.booking
+);
+
 module.exports = router;
