@@ -1,12 +1,29 @@
 const httpStatus = require('http-status');
 
+const User = require('../models/User');
 const Hotel = require('../models/Hotel');
+const Room = require('../models/Room');
+
+module.exports.getHotel = async (req, res) => {
+  try {
+    const user = await User.findById(req.userId);
+
+    const hotels = await Hotel.find(
+      user.role === 1 ? {} : { owner: req.userId }
+    ).populate('owner', 'fullname email -_id');
+
+    return res.json({ hotels });
+  } catch (err) {
+    return res
+      .status(httpStatus.INTERNAL_SERVER_ERROR)
+      .json({ message: err.message });
+  }
+};
 
 module.exports.createHotel = async (req, res) => {
   const {
     name,
     description,
-    avatar,
     star,
     city,
     district,
@@ -20,7 +37,6 @@ module.exports.createHotel = async (req, res) => {
     const hotelId = await Hotel.create({
       name,
       description,
-      avatar,
       star,
       city,
       district,
@@ -28,6 +44,7 @@ module.exports.createHotel = async (req, res) => {
       street,
       phone,
       status,
+      avatar: req.file.path,
       owner: req.userId,
     });
 
@@ -48,7 +65,6 @@ module.exports.editHotel = async (req, res) => {
     id,
     name,
     description,
-    avatar,
     star,
     city,
     district,
@@ -70,7 +86,6 @@ module.exports.editHotel = async (req, res) => {
     await Hotel.findByIdAndUpdate(id, {
       name,
       description,
-      avatar,
       star,
       city,
       district,
@@ -114,4 +129,20 @@ module.exports.filter = async (req, res) => {
     .populate('owner', 'email fullname phone -_id');
 
   return res.json({ hotels });
+};
+
+module.exports.deleteHotel = async (req, res) => {
+  const { hotelId } = req.body;
+
+  try {
+    await Hotel.findByIdAndDelete(hotelId);
+
+    await Room.deleteMany({ hotel: { $in: hotelId } });
+
+    return res.json({ id: hotelId });
+  } catch (err) {
+    return res
+      .status(httpStatus.INTERNAL_SERVER_ERROR)
+      .json({ message: err.message });
+  }
 };

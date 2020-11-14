@@ -15,8 +15,6 @@ module.exports.createHotel = (req, res, next) => {
     status: Joi.string()
       .valid('closed', 'temporarily', 'available', 'out of room')
       .required(),
-    //should move it
-    avatar: Joi.string().required(),
   });
 
   const { error } = schema.validate(req.body);
@@ -58,6 +56,20 @@ module.exports.filter = (req, res, next) => {
     city: Joi.string().required().insensitive(),
     number_of_rooms: Joi.number().required(),
     number_of_guest: Joi.number().required(),
+  });
+
+  const { error } = schema.validate(req.body);
+  if (error) {
+    return res.status(status.BAD_REQUEST).json({
+      message: error.message,
+    });
+  }
+  next();
+};
+
+module.exports.deleteHotel = (req, res, next) => {
+  const schema = Joi.object({
+    hotelId: Joi.objectId().required(),
   });
 
   const { error } = schema.validate(req.body);

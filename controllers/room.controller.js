@@ -4,6 +4,14 @@ const Hotel = require('../models/Hotel');
 const Room = require('../models/Room');
 const Transaction = require('../models/Transaction');
 
+module.exports.getRoom = async (req, res) => {
+  const { hotelId } = req.params;
+
+  const rooms = await Room.find({ hotel: hotelId });
+
+  return res.json({ rooms });
+};
+
 module.exports.createRoom = async (req, res) => {
   const { name, hotel, equipments, area, quantity, people, price } = req.body;
 
@@ -16,6 +24,7 @@ module.exports.createRoom = async (req, res) => {
       quantity,
       people,
       price,
+      images: req.files.map((item) => item.path),
     });
     await Hotel.findByIdAndUpdate(
       hotel,
@@ -111,5 +120,19 @@ module.exports.booking = async (req, res) => {
     return res.status(status.INTERNAL_SERVER_ERROR).json({
       message: err.message,
     });
+  }
+};
+
+module.exports.deleteRoom = async (req, res) => {
+  const { roomId } = req.body;
+
+  try {
+    await Room.findByIdAndDelete({ roomId });
+
+    return res.json({ id: roomId });
+  } catch (err) {
+    return res
+      .status(httpStatus.INTERNAL_SERVER_ERROR)
+      .json({ message: err.message });
   }
 };

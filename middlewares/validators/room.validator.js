@@ -60,3 +60,17 @@ module.exports.booking = (req, res, next) => {
   }
   next();
 };
+
+module.exports.deleteRoom = (req, res, next) => {
+  const schema = Joi.object({
+    roomId: Joi.objectId().required(),
+  });
+
+  const { error } = schema.validate(req.body);
+  if (error) {
+    return res.status(status.BAD_REQUEST).json({
+      message: error.message,
+    });
+  }
+  next();
+};

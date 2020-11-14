@@ -14,13 +14,13 @@ mongoose.connect(process.env.MONGO_URI, {
 });
 
 const authRoute = require('./routes/auth');
+const userRoute = require('./routes/user');
 const hotelRoute = require('./routes/hotel');
 const roomRoute = require('./routes/room');
 const equipmentRoute = require('./routes/equipment');
 const locationRoute = require('./routes/location');
 
 const app = express();
-console.log(process.env.REACT_APP_URL);
 const corsOptions = {
   origin: process.env.REACT_APP_URL,
   optionsSuccessStatus: 200,
@@ -36,6 +36,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cors(corsOptions));
 
 app.use('/api/auth', authRoute);
+app.use('/api/user', userRoute);
 app.use('/api/hotel', hotelRoute);
 app.use('/api/room', roomRoute);
 app.use('/api/equipment', equipmentRoute);
