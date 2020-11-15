@@ -12,7 +12,7 @@ const mailVerify = (fullname, email, code) => {
     'Please verify your account before login',
     `
     <h1>Hello ${fullname}</h1>
-    <p>Please copy and go to ${process.env.WEB_URI}/api/auth/verify?email=${email}&code=${code} to verify your account.</p>
+    <p>Please copy ${code} to verify your account.</p>
   `
   );
 };
@@ -97,13 +97,13 @@ module.exports.register = async (req, res) => {
 };
 
 module.exports.verfiy = async (req, res) => {
-  const { email, code } = req.query;
+  const { email, code } = req.body;
 
   const user = await User.findOne({ email });
   const verify = await Verify.findOne({ user: user.id, code });
   if (!verify) {
     return res.status(status.BAD_REQUEST).json({
-      message: 'Please use correct link or resend verify mail.',
+      message: 'Please use correct code or resend verify mail.',
     });
   }
 

@@ -60,3 +60,21 @@ module.exports.resendMailVerify = async (req, res, next) => {
   }
   next();
 };
+
+module.exports.verfiy = async (req, res, next) => {
+  const schema = Joi.object({
+    email: Joi.string()
+      .required()
+      .pattern(new RegExp(/(\W|^)[\w.+\-]*@gmail\.com(\W|$)/))
+      .insensitive(),
+    code: Joi.string().required();    
+  });
+
+  const { error } = schema.validate(req.body);
+  if (error) {
+    return res.status(status.BAD_REQUEST).json({
+      message: error.message,
+    });
+  }
+  next();
+};
