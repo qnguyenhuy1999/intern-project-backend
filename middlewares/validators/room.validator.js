@@ -4,13 +4,24 @@ const status = require('http-status');
 
 module.exports.createRoom = (req, res, next) => {
   const schema = Joi.object({
-    name: Joi.string().max(50).required(),
+    name: Joi.string().max(50).required().messages({
+      'string.base':
+        'Sorry! It looks like something went wrong. Please try later',
+      // 'string.pattern.base': 'Phone number must be a 10 digits number',
+      'string.empty': 'Tên loại phòng không được trống',
+      // 'any.required': 'Phone Number is required',
+      'string.max': 'Tên loại phòng tối đa 50 kí tự',
+    }),
     hotel: Joi.objectId().required(),
     equipments: Joi.array().items(Joi.objectId()).single(),
     area: Joi.number().required(),
     quantity: Joi.number().required(),
     people: Joi.number().required(),
-    price: Joi.number().required(),
+    price: Joi.number().required().messages({
+      'number.empty': 'Giá phòng không được trống',
+      'number.base': 'Giá phòng phải là một số',
+    }),
+    views: Joi.number().required(),
   });
 
   const { error } = schema.validate(req.body);
@@ -32,6 +43,7 @@ module.exports.editRoom = (req, res, next) => {
     quantity: Joi.number().required(),
     people: Joi.number().required(),
     price: Joi.number().required(),
+    views: Joi.number().required(),
   });
 
   const { error } = schema.validate(req.body);

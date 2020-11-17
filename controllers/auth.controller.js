@@ -141,7 +141,7 @@ module.exports.resendMailVerify = async (req, res) => {
   }
 
   const newVerify = await Verify.findOneAndUpdate(
-    { email },
+    { user: user.id },
     {
       code: shortId.generate(),
       user: user.id,

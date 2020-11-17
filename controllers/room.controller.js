@@ -13,7 +13,23 @@ module.exports.getRoom = async (req, res) => {
 };
 
 module.exports.createRoom = async (req, res) => {
-  const { name, hotel, equipments, area, quantity, people, price } = req.body;
+  const {
+    name,
+    views,
+    hotel,
+    equipments,
+    area,
+    quantity,
+    people,
+    price,
+  } = req.body;
+
+  if (req.files.length < 1) {
+    console.log('hehe');
+    return res.status(status.BAD_REQUEST).json({
+      message: 'Bạn chưa chọn ảnh cho phòng',
+    });
+  }
 
   try {
     const roomId = await Room.create({
@@ -23,6 +39,7 @@ module.exports.createRoom = async (req, res) => {
       area,
       quantity,
       people,
+      views,
       price,
       images: req.files.map((item) => item.path),
     });
@@ -127,12 +144,12 @@ module.exports.deleteRoom = async (req, res) => {
   const { roomId } = req.body;
 
   try {
-    await Room.findByIdAndDelete({ roomId });
+    await Room.findByIdAndDelete({ _id: roomId });
 
     return res.json({ id: roomId });
   } catch (err) {
     return res
-      .status(httpStatus.INTERNAL_SERVER_ERROR)
+      .status(status.INTERNAL_SERVER_ERROR)
       .json({ message: err.message });
   }
 };

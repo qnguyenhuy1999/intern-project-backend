@@ -67,7 +67,7 @@ module.exports.verfiy = async (req, res, next) => {
       .required()
       .pattern(new RegExp(/(\W|^)[\w.+\-]*@gmail\.com(\W|$)/))
       .insensitive(),
-    code: Joi.string().required();    
+    code: Joi.string().required(),
   });
 
   const { error } = schema.validate(req.body);
