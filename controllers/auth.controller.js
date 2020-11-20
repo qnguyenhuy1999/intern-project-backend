@@ -6,6 +6,8 @@ const mail = require('../helpers/mail');
 const User = require('../models/User');
 const Verify = require('../models/Verify');
 
+const authMessages = require('./../helpers/message/auth.message');
+
 const mailVerify = (fullname, email, code) => {
   return mail.sendMail(
     email,
@@ -21,24 +23,24 @@ module.exports.login = async (req, res) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email });
+  if (!user) {
+    return res
+      .status(status.NOT_FOUND)
+      .json({ message: authMessages.EMAIL_NOT_EXIST });
+  }
+
   const verify = await Verify.findOne({ user: user.id });
 
   if (!verify.isVerify) {
     return res.status(status.BAD_REQUEST).json({
-      message: 'Email not verify.',
+      message: authMessages.EMAIL_NOT_VERIFIED,
     });
-  }
-
-  if (!user) {
-    return res
-      .status(status.NOT_FOUND)
-      .json({ message: 'The email or password not correct.' });
   }
 
   user.comparePassword(password, async (err, isMatch) => {
     if (!isMatch) {
       return res.status(status.UNAUTHORIZED).json({
-        message: 'The email or password not correct.',
+        message: authMessages.LOGIN_FAIL,
       });
     }
 
@@ -65,7 +67,7 @@ module.exports.register = async (req, res) => {
   const userExists = await User.findOne({ email });
   if (userExists !== null) {
     return res.status(status.BAD_REQUEST).json({
-      message: 'Email has already exists.',
+      message: authMessages.EMAIL_EXIST,
     });
   }
 
@@ -88,7 +90,7 @@ module.exports.register = async (req, res) => {
 
     mailVerify(fullname, email, verify.code);
 
-    return res.json({ message: 'Register successfully.' });
+    return res.json({ message: authMessages.REGISTER_SUCCESS });
   } catch (err) {
     return res.status(status.BAD_REQUEST).json({
       message: err.message,
@@ -103,13 +105,13 @@ module.exports.verfiy = async (req, res) => {
   const verify = await Verify.findOne({ user: user.id, code });
   if (!verify) {
     return res.status(status.BAD_REQUEST).json({
-      message: 'Please use correct code or resend verify mail.',
+      message: authMessages.VERIFY_FAIL,
     });
   }
 
   if (verify.isVerify) {
     return res.status(status.BAD_REQUEST).json({
-      message: 'Email verified.',
+      message: authMessages.EMAIL_VERIFIED,
     });
   }
 
@@ -120,7 +122,7 @@ module.exports.verfiy = async (req, res) => {
     }
   );
 
-  return res.json({ message: 'Verify successfully.' });
+  return res.json({ message: authMessages.VERIFY_SUCCESS });
 };
 
 module.exports.resendMailVerify = async (req, res) => {
@@ -129,14 +131,14 @@ module.exports.resendMailVerify = async (req, res) => {
   const user = await User.findOne({ email });
   if (!user) {
     return res.status(status.BAD_REQUEST).json({
-      message: 'Email not correct.',
+      message: authMessages.EMAIL_NOT_EXIST,
     });
   }
 
   const verify = await Verify.findOne({ user: user.id });
   if (verify.isVerify) {
     return res.status(status.BAD_REQUEST).json({
-      message: 'Email verified.',
+      message: authMessages.EMAIL_VERIFIED,
     });
   }
 
@@ -148,7 +150,7 @@ module.exports.resendMailVerify = async (req, res) => {
     }
   );
   mailVerify(user.fullname, email, newVerify.code);
-  return res.json({ message: 'Resend mail successfully.' });
+  return res.json({ message: authMessages.RESEND_CODE_SUCCESS });
 };
 
 module.exports.logout = (req, res) => {
