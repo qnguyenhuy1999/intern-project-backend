@@ -49,9 +49,8 @@ module.exports.createRoom = async (req, res) => {
       { new: true, upsert: true }
     );
 
-    const room = await Room.findById(roomId)
-      .populate('hotel', '-rooms')
-      .populate('equipments');
+    const room = await Room.findById(roomId).populate('hotel', '-rooms');
+    // .populate('equipments');
 
     return res.json({ room });
   } catch (err) {
@@ -92,9 +91,8 @@ module.exports.editRoom = async (req, res) => {
       price,
     });
 
-    const room = await Room.findById(id)
-      .populate('hotel', '-rooms')
-      .populate('equipments');
+    const room = await Room.findById(id).populate('hotel', '-rooms');
+    // .populate('equipments');
 
     return res.json({ room });
   } catch (err) {
