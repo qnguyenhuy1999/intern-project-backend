@@ -96,7 +96,7 @@ module.exports.register = async (req, res) => {
   }
 };
 
-module.exports.verfiy = async (req, res) => {
+module.exports.verify = async (req, res) => {
   const { email, code } = req.body;
 
   const user = await User.findOne({ email });

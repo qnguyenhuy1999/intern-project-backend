@@ -7,7 +7,7 @@ const middleware = require('../middlewares/auth.middleware');
 
 router.post('/login', validator.login, controller.login);
 router.post('/register', validator.register, controller.register);
-router.post('/verify', validator.verfiy, controller.verfiy);
+router.post('/verify', validator.verify, controller.verify);
 router.post(
   '/resend-mail-verify',
   validator.resendMailVerify,
