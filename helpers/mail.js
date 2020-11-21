@@ -22,7 +22,7 @@ module.exports.sendMail = async (email, subject, message) => {
       if (err) {
         console.log(err);
       } else {
-        console.log('Email sent: ', info.response);
+        // console.log('Email sent: ', info.response);
       }
     }
   );

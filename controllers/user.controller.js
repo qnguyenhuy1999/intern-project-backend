@@ -22,6 +22,8 @@ module.exports.updateRoleUser = async (req, res) => {
     await User.findByIdAndUpdate(userId, {
       role,
     });
+    const user = await User.findById(userId);
+    return res.json({ user });
   } catch (err) {
     return res
       .status(status.INTERNAL_SERVER_ERROR)

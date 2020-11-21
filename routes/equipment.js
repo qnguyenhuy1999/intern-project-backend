@@ -13,4 +13,6 @@ router.post(
   controller.createEquipment
 );
 
+router.get('/', controller.getEquipment);
+
 module.exports = router;
