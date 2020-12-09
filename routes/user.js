@@ -5,6 +5,20 @@ const controller = require('../controllers/user.controller');
 const validator = require('../middlewares/validators/user.validator');
 const authMiddleware = require('../middlewares/auth.middleware');
 
+router.post(
+  '/update-profile',
+  authMiddleware.requireAuth,
+  validator.updateProfile,
+  controller.updateProfile
+);
+
+router.post(
+  '/change-password',
+  authMiddleware.requireAuth,
+  validator.changePassword,
+  controller.changePassword
+);
+
 router.get(
   '/getAllUser',
   authMiddleware.requireAuth,

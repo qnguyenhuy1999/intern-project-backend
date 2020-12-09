@@ -14,6 +14,9 @@ router.get(
   controller.getHotel
 );
 
+// user search then view profile hotel
+router.get('/:hotelId', controller.getHotelByID);
+
 router.post(
   '/create',
   authMiddleware.requireAuth,

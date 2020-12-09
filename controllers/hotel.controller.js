@@ -146,3 +146,15 @@ module.exports.deleteHotel = async (req, res) => {
       .json({ message: err.message });
   }
 };
+
+module.exports.getHotelByID = async (req, res) => {
+  const { hotelId } = req.params;
+  try {
+    const hotel = await Hotel.findById(hotelId);
+    return res.json(hotel);
+  } catch (err) {
+    return res
+      .status(httpStatus.INTERNAL_SERVER_ERROR)
+      .json({ message: err.message });
+  }
+};
