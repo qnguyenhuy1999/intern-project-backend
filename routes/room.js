@@ -32,18 +32,13 @@ router.put(
 );
 
 router.post(
-  '/booking',
-  authMiddleware.requireAuth,
-  validator.booking,
-  controller.booking
-);
-
-router.post(
   '/delete',
   authMiddleware.requireAuth,
   authMiddleware.isOwnHotel,
   validator.deleteRoom,
   controller.deleteRoom
 );
+
+router.get('/show/:roomId', controller.getRoomById);
 
 module.exports = router;

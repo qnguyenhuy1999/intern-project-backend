@@ -55,24 +55,6 @@ module.exports.editRoom = (req, res, next) => {
   next();
 };
 
-module.exports.booking = (req, res, next) => {
-  const schema = Joi.object({
-    room: Joi.objectId().required(),
-    phone: Joi.number().required(),
-    fullname: Joi.string().required(),
-    checkin_date: Joi.date().required(),
-    checkout_date: Joi.date().required(),
-  });
-
-  const { error } = schema.validate(req.body);
-  if (error) {
-    return res.status(status.BAD_REQUEST).json({
-      message: error.message,
-    });
-  }
-  next();
-};
-
 module.exports.deleteRoom = (req, res, next) => {
   const schema = Joi.object({
     roomId: Joi.objectId().required(),

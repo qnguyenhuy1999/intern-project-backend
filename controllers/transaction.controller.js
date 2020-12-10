@@ -104,6 +104,42 @@ module.exports.editRoom = async (req, res) => {
   }
 };
 
+module.exports.booking = async (req, res) => {
+  const { room, phone, fullname, checkin_date, checkout_date } = req.body;
+
+  try {
+    const transactionId = await Transaction.create({
+      room,
+      user: req.userId,
+      phone,
+      fullname,
+      checkin_date,
+      checkout_date,
+    });
+
+    const transaction = await Transaction.findById(transactionId.id)
+      .populate({
+        path: 'room',
+        select: 'equipments name hotel area  people price',
+        populate: {
+          path: 'hotel',
+          select:
+            'name description avatar star city district ward street phone',
+        },
+        populate: {
+          path: 'equipments',
+        },
+      })
+      .populate('user', 'email city district ward street');
+
+    return res.json({ transaction });
+  } catch (err) {
+    return res.status(status.INTERNAL_SERVER_ERROR).json({
+      message: err.message,
+    });
+  }
+};
+
 module.exports.deleteRoom = async (req, res) => {
   const { roomId } = req.body;
 

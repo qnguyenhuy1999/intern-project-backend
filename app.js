@@ -19,6 +19,7 @@ const hotelRoute = require('./routes/hotel');
 const roomRoute = require('./routes/room');
 const equipmentRoute = require('./routes/equipment');
 const locationRoute = require('./routes/location');
+const transactionRoute = require('./routes/transaction');
 
 const app = express();
 const corsOptions = {
@@ -41,6 +42,7 @@ app.use('/api/hotel', hotelRoute);
 app.use('/api/room', roomRoute);
 app.use('/api/equipment', equipmentRoute);
 app.use('/api/location', locationRoute);
+app.use('/api/transaction', transactionRoute);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
