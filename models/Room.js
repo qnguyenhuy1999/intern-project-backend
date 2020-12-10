@@ -44,6 +44,11 @@ const roomSchema = new mongoose.Schema({
       required: true,
     },
   ],
+  isDeleted: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
 });
 
 module.exports = mongoose.model('Room', roomSchema);

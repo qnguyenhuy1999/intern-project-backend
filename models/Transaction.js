@@ -1,3 +1,4 @@
+const { boolean } = require('@hapi/joi');
 const mongoose = require('mongoose');
 
 const transactionSchema = new mongoose.Schema(
@@ -12,10 +13,16 @@ const transactionSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
-    phone: Number,
+    phone: String,
     fullname: String,
     checkin_date: Date,
     checkout_date: Date,
+    amount: Number,
+    status: {
+      type: Number,
+      default: 0,
+    }, // 0: chua nhan phong, 1: dang nhan, 2: da tra phong
+    totalPrice: Number,
   },
   {
     timestamps: true,

@@ -1,4 +1,6 @@
+const { boolean } = require('@hapi/joi');
 const mongoose = require('mongoose');
+const { booking } = require('../controllers/transaction.controller');
 
 //avatar: 450x450, listImageDescription: 1200x800
 const hotelSchema = new mongoose.Schema({
@@ -35,7 +37,7 @@ const hotelSchema = new mongoose.Schema({
     required: true,
   },
   phone: {
-    type: Number,
+    type: String,
     required: true,
   },
   status: {
@@ -53,6 +55,11 @@ const hotelSchema = new mongoose.Schema({
       ref: 'Room',
     },
   ],
+  isDeleted: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
 });
 
 module.exports = mongoose.model('Hotel', hotelSchema);

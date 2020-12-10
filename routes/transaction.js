@@ -11,4 +11,6 @@ router.post(
   validator.booking,
   controller.booking
 );
+
+router.get('/user', authMiddleware.requireAuth, controller.getHistoryOfUser);
 module.exports = router;

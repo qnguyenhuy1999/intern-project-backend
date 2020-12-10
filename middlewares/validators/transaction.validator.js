@@ -9,6 +9,8 @@ module.exports.booking = (req, res, next) => {
     fullname: Joi.string().required(),
     checkin_date: Joi.date().required(),
     checkout_date: Joi.date().required(),
+    amount: Joi.number().required(),
+    totalPrice: Joi.number().required(),
   });
 
   const { error } = schema.validate(req.body);
