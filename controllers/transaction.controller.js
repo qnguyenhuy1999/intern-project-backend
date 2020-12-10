@@ -3,6 +3,7 @@ const shortid = require('shortid');
 const Hotel = require('../models/Hotel');
 const Room = require('../models/Room');
 const Transaction = require('../models/Transaction');
+const mongoose = require('mongoose');
 
 shortid.characters(
   '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$@'
@@ -49,14 +50,16 @@ module.exports.booking = async (req, res) => {
       .populate({
         path: 'room',
         select: 'equipments name hotel area  people price',
-        populate: {
-          path: 'hotel',
-          select:
-            'name description avatar star city district ward street phone',
-        },
-        populate: {
-          path: 'equipments',
-        },
+        populate: [
+          {
+            path: 'hotel',
+            select:
+              'name description avatar star city district ward street phone',
+          },
+          {
+            path: 'equipments',
+          },
+        ],
       })
       .populate('user', 'email city district ward street');
 
@@ -75,18 +78,58 @@ module.exports.getHistoryOfUser = async (req, res) => {
     const transactions = await Transaction.find({ user: userId })
       .populate({
         path: 'room',
-        select: 'equipments name hotel area  people price',
-        populate: {
-          path: 'hotel',
-          select:
-            'name description avatar star city district ward street phone',
-        },
-        populate: {
-          path: 'equipments',
-        },
+        select: 'equipments name hotel area people price',
+        populate: [
+          {
+            path: 'hotel',
+            select:
+              'name description avatar star city district ward street phone',
+          },
+          {
+            path: 'equipments',
+          },
+        ],
       })
       .populate('user', 'email city district ward street');
 
+    return res.json({ transactions });
+  } catch (err) {
+    return res.status(status.INTERNAL_SERVER_ERROR).json({
+      message: err.message,
+    });
+  }
+};
+
+module.exports.getHistoryOfHotel = async (req, res) => {
+  const { userId } = req;
+  const { hotelId } = req.params;
+
+  try {
+    const transactions = await Room.aggregate([
+      {
+        $match: {
+          hotel: mongoose.Types.ObjectId(hotelId),
+        },
+      },
+      {
+        $sort: {
+          createdAt: -1,
+        },
+      },
+      {
+        $lookup: {
+          from: 'transactions',
+          localField: '_id',
+          foreignField: 'room',
+          as: 'transactions',
+        },
+      },
+      {
+        $project: {
+          transactions: 1,
+        },
+      },
+    ]);
     return res.json({ transactions });
   } catch (err) {
     return res.status(status.INTERNAL_SERVER_ERROR).json({

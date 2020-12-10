@@ -13,4 +13,11 @@ router.post(
 );
 
 router.get('/user', authMiddleware.requireAuth, controller.getHistoryOfUser);
+
+router.get(
+  '/hotel/:hotelId',
+  authMiddleware.requireAuth,
+  authMiddleware.isOwnHotel,
+  controller.getHistoryOfHotel
+);
 module.exports = router;
