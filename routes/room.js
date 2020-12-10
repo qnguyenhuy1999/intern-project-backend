@@ -9,8 +9,8 @@ const upload = cloudinary('room', 'media');
 
 router.get(
   '/:hotelId',
-  authMiddleware.requireAuth,
-  authMiddleware.isOwnHotel,
+  // authMiddleware.requireAuth,
+  // authMiddleware.isOwnHotel,
   controller.getRoom
 );
 

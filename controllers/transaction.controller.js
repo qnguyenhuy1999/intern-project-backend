@@ -1,8 +1,12 @@
 const status = require('http-status');
-
+const shortid = require('shortid');
 const Hotel = require('../models/Hotel');
 const Room = require('../models/Room');
 const Transaction = require('../models/Transaction');
+
+shortid.characters(
+  '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$@'
+);
 
 module.exports.booking = async (req, res) => {
   const {
@@ -21,6 +25,13 @@ module.exports.booking = async (req, res) => {
       .status(status.BAD_REQUEST)
       .json({ message: 'Room does not exist' });
 
+  let code = '';
+  while (true) {
+    code = shortid.generate();
+    let existTransaction = await Transaction.find({ code });
+    if (existTransaction.length === 0) break;
+  }
+
   try {
     const transactionId = await Transaction.create({
       room,
@@ -31,6 +42,7 @@ module.exports.booking = async (req, res) => {
       checkout_date,
       amount,
       totalPrice,
+      code,
     });
 
     const transaction = await Transaction.findById(transactionId.id)
@@ -58,8 +70,9 @@ module.exports.booking = async (req, res) => {
 
 module.exports.getHistoryOfUser = async (req, res) => {
   const { userId } = req;
+
   try {
-    const transaction = await Transaction.find({ user: userId })
+    const transactions = await Transaction.find({ user: userId })
       .populate({
         path: 'room',
         select: 'equipments name hotel area  people price',
@@ -74,11 +87,10 @@ module.exports.getHistoryOfUser = async (req, res) => {
       })
       .populate('user', 'email city district ward street');
 
-    return res.json({ transaction });
+    return res.json({ transactions });
   } catch (err) {
     return res.status(status.INTERNAL_SERVER_ERROR).json({
       message: err.message,
     });
   }
-  res.json(userId);
 };

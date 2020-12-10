@@ -23,6 +23,7 @@ const transactionSchema = new mongoose.Schema(
       default: 0,
     }, // 0: chua nhan phong, 1: dang nhan, 2: da tra phong
     totalPrice: Number,
+    code: String,
   },
   {
     timestamps: true,
