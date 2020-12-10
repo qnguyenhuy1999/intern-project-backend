@@ -110,15 +110,29 @@ module.exports.editHotel = async (req, res) => {
 
 module.exports.filter = async (req, res) => {
   //1 room 2 people
-  const { city, number_of_rooms, number_of_guest } = req.body;
-
+  const { keyword, room, people } = req.body;
+  console.log(keyword);
   //if empty rooms, it can be out of room or room not enough contain number of guests
-  const hotels = await Hotel.find({ $and: [{ city }, { status: 'available' }] })
+  const hotels = await Hotel.find({
+    $and: [
+      {
+        $or: [
+          {
+            city: { $regex: `.*${keyword}.*`, $options: 'i' },
+          },
+          {
+            name: { $regex: `.*${keyword}.*`, $options: 'i' },
+          },
+        ],
+      },
+      { status: 'available' },
+    ],
+  })
     .populate({
       path: 'rooms',
       match: {
-        quantity: { $gte: number_of_rooms },
-        people: { $gte: number_of_guest },
+        quantity: { $gte: room },
+        people: { $gte: people },
       },
       select: 'views quantity images name hotel area people price',
       populate: {

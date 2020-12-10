@@ -53,9 +53,9 @@ module.exports.editHotel = (req, res, next) => {
 
 module.exports.filter = (req, res, next) => {
   const schema = Joi.object({
-    city: Joi.string().required().insensitive(),
-    number_of_rooms: Joi.number().required(),
-    number_of_guest: Joi.number().required(),
+    keyword: Joi.string().required().allow(''),
+    room: Joi.number().required(),
+    people: Joi.number().required(),
   });
 
   const { error } = schema.validate(req.body);
