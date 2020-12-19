@@ -21,3 +21,16 @@ module.exports.booking = (req, res, next) => {
   }
   next();
 };
+module.exports.checkIn = (req, res, next) => {
+  const schema = Joi.object({
+    code: Joi.string().required(),
+  });
+
+  const { error } = schema.validate(req.body);
+  if (error) {
+    return res.status(status.BAD_REQUEST).json({
+      message: error.message,
+    });
+  }
+  next();
+};

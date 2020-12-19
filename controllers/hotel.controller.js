@@ -111,7 +111,6 @@ module.exports.editHotel = async (req, res) => {
 module.exports.filter = async (req, res) => {
   //1 room 2 people
   const { keyword, room, people } = req.body;
-  console.log(keyword);
   //if empty rooms, it can be out of room or room not enough contain number of guests
   const hotels = await Hotel.find({
     $and: [

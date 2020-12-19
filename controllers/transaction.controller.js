@@ -130,7 +130,83 @@ module.exports.getHistoryOfHotel = async (req, res) => {
         },
       },
     ]);
-    return res.json({ transactions });
+    let data = [];
+    transactions.forEach((i) => {
+      i.transactions.forEach((item) => {
+        data.push(item);
+      });
+    });
+    return res.json({ transactions: data });
+  } catch (err) {
+    return res.status(status.INTERNAL_SERVER_ERROR).json({
+      message: err.message,
+    });
+  }
+};
+
+module.exports.receiveRoom = async (req, res) => {
+  const { transactionId } = req.params;
+  try {
+    isUpdated = await Transaction.findByIdAndUpdate(transactionId, {
+      status: 1,
+    });
+    if (!isUpdated) {
+      return res
+        .status(status.NOT_FOUND)
+        .json({ message: 'Transaction not found' });
+    }
+
+    const transaction = await Transaction.findById(transactionId);
+    return res.json({ transaction });
+  } catch (err) {
+    return res.status(status.INTERNAL_SERVER_ERROR).json({
+      message: err.message,
+    });
+  }
+};
+
+module.exports.checkIn = async (req, res) => {
+  const { transactionId } = req.params;
+  const { code } = req.body;
+  try {
+    let transaction = await Transaction.findById(transactionId);
+    if (!transaction) {
+      return res
+        .status(status.NOT_FOUND)
+        .json({ message: 'Transaction not found' });
+    }
+    if (code !== transaction.code)
+      return res
+        .status(status.BAD_REQUEST)
+        .json({ message: 'Mã xác nhận không đúng' });
+
+    await Transaction.findByIdAndUpdate(transactionId, {
+      status: 1,
+    });
+
+    transaction = await Transaction.findById(transactionId);
+    return res.json({ transaction });
+  } catch (err) {
+    return res.status(status.INTERNAL_SERVER_ERROR).json({
+      message: err.message,
+    });
+  }
+};
+
+module.exports.checkOut = async (req, res) => {
+  const { transactionId } = req.params;
+  try {
+    isUpdated = await Transaction.findByIdAndUpdate(transactionId, {
+      status: 2,
+    });
+    if (!isUpdated) {
+      return res
+        .status(status.NOT_FOUND)
+        .json({ message: 'Transaction not found' });
+    }
+
+    const transaction = await Transaction.findById(transactionId);
+    return res.json({ transaction });
   } catch (err) {
     return res.status(status.INTERNAL_SERVER_ERROR).json({
       message: err.message,
